@@ -1,5 +1,7 @@
 package delta.pd.command;
 
+import java.sql.SQLException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -9,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import delta.pd.Lobby;
 import delta.pd.Main;
+import delta.pd.sql.stats.StatSearch;
 
 public class PD implements CommandExecutor {
 
@@ -72,6 +75,19 @@ public class PD implements CommandExecutor {
 					
 					Lobby.getInstance().setLobby(p);
 					p.sendMessage(prefix + "Main Lobby set!");
+					
+					return true;
+					
+				}
+				
+				else if(args[0].equalsIgnoreCase("stats")) {
+					
+					try {
+						StatSearch.getPlayerData(p, p.getName());
+					} catch (ClassNotFoundException | SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					return true;
 					
