@@ -80,6 +80,16 @@ public class PD implements CommandExecutor {
 					
 				}
 				
+				else if(args[0].equalsIgnoreCase("help")) {
+					
+					p.sendMessage(g + "" + u + "--------------------" + ChatColor.GRAY + ChatColor.BOLD + "[ " + b + "PayDay" + g + ChatColor.BOLD + " ]" + u + "--------------------");
+					p.sendMessage(b + "/pd -" + g + "Index Command");
+					p.sendMessage(b + "/pd help -" + g + "Shows this screen");
+					p.sendMessage(b + "/pd lobby - " + g + "Go to the lobby");
+					//adding commands as we go
+					
+				}
+				
 				else if(args[0].equalsIgnoreCase("stats")) {
 					
 					try {
