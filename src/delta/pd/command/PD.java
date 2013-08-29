@@ -86,7 +86,7 @@ public class PD implements CommandExecutor {
 					p.sendMessage(b + "/pd -" + g + "Index Command");
 					p.sendMessage(b + "/pd help -" + g + "Shows this screen");
 					p.sendMessage(b + "/pd lobby - " + g + "Go to the lobby");
-					//adding commands as we go
+					//adding commands as we go.
 					
 				}
 				
