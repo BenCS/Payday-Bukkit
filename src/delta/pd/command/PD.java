@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import delta.pd.Lobby;
 import delta.pd.Main;
 
 public class PD implements CommandExecutor {
@@ -35,10 +36,12 @@ public class PD implements CommandExecutor {
 			
 			if(args.length == 0) {
 				
-			p.sendMessage(g + "" + u + "--------------------" + ChatColor.GRAY + ChatColor.BOLD + "[ " + b + "PayDay" + g + ChatColor.BOLD + " ]" + u + "--------------------");
-			p.sendMessage(g + "Payday for MinecraftUniverse developed by " + r + "BenCS_ " + g + "and" );
-			p.sendMessage(r + "LegendSight. " + g + "**CURRENTLY IN ALPHA!!!!** Report bugs on forums!");
+				p.sendMessage(g + "" + u + "--------------------" + ChatColor.GRAY + ChatColor.BOLD + "[ " + b + "PayDay" + g + ChatColor.BOLD + " ]" + u + "--------------------");
+				p.sendMessage(g + "Payday for MinecraftUniverse developed by " + r + "BenCS_ " + g + "and" );
+				p.sendMessage(r + "LegendSight. " + g + "**CURRENTLY IN ALPHA!!!!** Report bugs on forums!");
 				
+				return true;
+			
 			}
 			
 			/*
@@ -50,16 +53,39 @@ public class PD implements CommandExecutor {
 			
 			if(args.length == 1) {
 				
-				if(label.equalsIgnoreCase("lobby")) {
+				if(args[0].equalsIgnoreCase("lobby")) {
 					
+                    if (Lobby.getInstance().teleportToLobby(p)) {
+
+                        p.sendMessage(prefix + ChatColor.GRAY + "Teleporting to lobby!");
+
+                    } else if (!Lobby.getInstance().teleportToLobby(p)) {
+
+                        p.sendMessage(prefix + ChatColor.RED + "ERROR: Lobby not found! Please tell server staff!");
+                    }
+                    
+					return true;
 					
+				}
+				
+				else if(args[0].equalsIgnoreCase("setlobby")) {
+					
+					Lobby.getInstance().setLobby(p);
+					p.sendMessage(prefix + "Main Lobby set!");
+					
+					return true;
 					
 				}
 				
 			}
 			
+			/*
+			 * End Args1
+			 */
+			
 		}
 		
+		p.sendMessage(prefix + "ERROR: Unknown arguments!");
 		return false;
 	}
 

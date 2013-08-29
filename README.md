@@ -9,8 +9,8 @@ TODO:
 - Arenas {}
 - Game {}
 - Shop {}
-- Stats/MySQL {}
-- Other Stuff {}
+- Stats/MySQL {Started}
+- Other Stuff {Started}
 
 Authors:
 --------------
