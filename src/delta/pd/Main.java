@@ -13,6 +13,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import delta.pd.Listener.BlockBreak;
+import delta.pd.Listener.BlockPlace;
+import delta.pd.Listener.PlayerJoin;
+import delta.pd.Listener.PlayerLeave;
 import delta.pd.Listener.RankChat;
 import delta.pd.command.PD;
 import delta.pd.sql.SQL;
@@ -77,6 +81,10 @@ public class Main extends JavaPlugin implements Listener {
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(new RankChat(), this);
+		pm.registerEvents(new PlayerJoin(), this);
+		pm.registerEvents(new PlayerLeave(), this);
+		pm.registerEvents(new BlockBreak(), this);
+		pm.registerEvents(new BlockPlace(), this);
 		
 		getCommand("pd").setExecutor(new PD());
 		
@@ -89,7 +97,7 @@ public class Main extends JavaPlugin implements Listener {
             this.Config.set("MySQL.Enable", false);
         }
         
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule doNaturalRegeneration false");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule naturalRegeneration false");
 		
 	}
 	

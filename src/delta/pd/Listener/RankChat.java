@@ -21,7 +21,7 @@ public class RankChat implements Listener {
 		
 		if(Main.getInstance().doesPlayerExist(e.getPlayer().getName())) {
 		
-			e.setFormat(ChatColor.GOLD + "[" + money + "] " + e.getFormat());
+			e.setFormat(ChatColor.GOLD + "[" + (int) money + "] " + e.getFormat());
 		
 		} else {
 			
