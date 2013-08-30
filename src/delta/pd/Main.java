@@ -49,6 +49,8 @@ public class Main extends JavaPlugin implements Listener {
 		
 		instance = this;
 		
+		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		
         configFile = new File(getDataFolder(), "config.yml");
         arenaFile = new File(getDataFolder(), "arena.yml");
         invFile = new File(getDataFolder(), "inventorys.yml");
@@ -108,6 +110,6 @@ public class Main extends JavaPlugin implements Listener {
         	return true;
         }
 		return false;
-    }
+    } 
     
 }

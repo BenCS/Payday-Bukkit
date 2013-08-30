@@ -1,6 +1,5 @@
 package delta.pd.Listener;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.IllegalFormatException;
 
@@ -10,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import delta.pd.Main;
-import delta.pd.sql.SQL;
 import delta.pd.sql.stats.PlayerMoney;
 
 public class RankChat implements Listener {

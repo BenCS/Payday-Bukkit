@@ -1,24 +1,9 @@
 package delta.pd.command;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Set;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiUnavailableException;
-
-import midi.MidiUtil;
-
 import org.apache.commons.io.IOUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,7 +12,6 @@ import org.bukkit.entity.Player;
 
 import delta.pd.Lobby;
 import delta.pd.Main;
-import delta.pd.sql.stats.CreatePlayer;
 import delta.pd.sql.stats.StatSearch;
 
 public class PD implements CommandExecutor {
@@ -39,20 +23,6 @@ public class PD implements CommandExecutor {
 	
 	int id;
 	int switchint = 1;
-	
-	InputStream is = null; {
-	is = Main.class.getResourceAsStream("/delta/pd/test.mid");
-	if (is == null)
-	    is = Main.class.getResourceAsStream("/delta/pd/test.mid");
-	StringWriter writer = new StringWriter();
-	try {
-	    IOUtils.copy(is, writer, "ISO-8859-1");
-	    String contents = writer.toString();
-	}
-	catch (Exception ex){
-	    ex.printStackTrace();
-	}
-}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -117,7 +87,7 @@ public class PD implements CommandExecutor {
 					p.sendMessage(b + "/pd -" + g + "Index Command");
 					p.sendMessage(b + "/pd help -" + g + "Shows this screen");
 					p.sendMessage(b + "/pd lobby - " + g + "Go to the lobby");
-					//adding commands as we go.
+					//This plugin is only for the game, lobby is a completely separate plugin.
 					
 				}
 				
