@@ -6,8 +6,7 @@ MinecraftUniverse Development Team
 ______________
 <br>
 TODO:
-- Arenas {}
-- Game {}
+- Game {Started}
 - Shop {}
 - Stats/MySQL {Started}
 - Other Stuff {Started}
@@ -17,4 +16,3 @@ Authors:
 _____________
 - BenCS (Head-Dev)
 - Legend (Co-Dev)
-- AntHQ (Contributor)
