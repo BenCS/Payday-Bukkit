@@ -2,6 +2,7 @@ package delta.pd;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
@@ -12,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import delta.pd.Listener.RankChat;
 import delta.pd.command.PD;
 import delta.pd.sql.SQL;
 
@@ -72,6 +74,7 @@ public class Main extends JavaPlugin implements Listener {
 		
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(this, this);
+		pm.registerEvents(new RankChat(), this);
 		
 		getCommand("pd").setExecutor(new PD());
 		
@@ -83,6 +86,8 @@ public class Main extends JavaPlugin implements Listener {
             log.severe("Connection failed. Defaulting to SQLite.");
             this.Config.set("MySQL.Enable", false);
         }
+        
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule doNaturalRegeneration false");
 		
 	}
 	
@@ -95,5 +100,14 @@ public class Main extends JavaPlugin implements Listener {
         con.createStatement().execute("CREATE TABLE IF NOT EXISTS payday(username VARCHAR(255), kills INTEGER, deaths INTEGER, heists INTEGER, money INTEGER)");
 
     }
-	
+
+    public boolean doesPlayerExist(String target) throws SQLException, ClassNotFoundException {
+        ResultSet rs = SQL.getStatement().executeQuery("SELECT COUNT(*) FROM payday WHERE username LIKE '%" + target + "';");
+        rs.next();
+        if (rs.getInt(1) != 0) {
+        	return true;
+        }
+		return false;
+    }
+    
 }

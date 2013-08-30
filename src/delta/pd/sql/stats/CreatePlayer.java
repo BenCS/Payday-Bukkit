@@ -9,7 +9,7 @@ public class CreatePlayer {
 
     public static void enterNewUser(String player) throws SQLException, ClassNotFoundException {
 
-        ResultSet rs = SQL.getStatement().executeQuery("SELECT COUNT(*) FROM sbw WHERE username='" + player + "';");
+        ResultSet rs = SQL.getStatement().executeQuery("SELECT COUNT(*) FROM payday WHERE username='" + player + "';");
 
         rs.next();
 
