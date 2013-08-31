@@ -60,7 +60,7 @@ public class SQL {
 
                 else {
 
-                    con = DriverManager.getConnection("jdbc:sqlite:plugins/MC-SBW/Data.sql");
+                    con = DriverManager.getConnection("jdbc:sqlite:plugins/" + Main.getInstance().getDataFolder().getAbsolutePath() + "/Data.sql");
 
                 }
 
