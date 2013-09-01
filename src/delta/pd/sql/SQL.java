@@ -19,7 +19,7 @@ public class SQL {
 
     public static Connection getConnection() throws SQLException, ClassNotFoundException {
 
-        String prefix = "[MC-SBW] ";
+        String prefix = "[PAYDAY] ";
         if (Main.getInstance().Config.getBoolean("MySQL.Enable")) {
 
             try {
@@ -60,7 +60,7 @@ public class SQL {
 
                 else {
 
-                    con = DriverManager.getConnection("jdbc:sqlite:plugins/" + Main.getInstance().getDataFolder().getAbsolutePath() + "/Data.sql");
+                    con = DriverManager.getConnection("jdbc:sqlite:plugins/Payday/Data.sql");
 
                 }
 

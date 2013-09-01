@@ -10,4 +10,6 @@ MySQL:
   Database: payday
   Username: root
   Password: pass
-# Arena Settings  
+# Arena Settings
+Map-Name:
+Mission-Objectives:  

@@ -107,8 +107,11 @@ public class Main extends JavaPlugin implements Listener {
 
         con = SQL.getConnection();
 
+        //for server status, 0 = false 1 = true
+        
         con.createStatement().execute("CREATE TABLE IF NOT EXISTS payday(username VARCHAR(255), kills INTEGER, deaths INTEGER, heists INTEGER, money INTEGER)");
-
+//        con.createStatement().execute("CREATE TABLE IF NOT EXISTS serverinfo(servername VARCHAR(255), enabled INTEGER, inlobby INTEGER, ingame INTEGER, startings INTEGER)");
+        
     }
 
     public boolean doesPlayerExist(String target) throws SQLException, ClassNotFoundException {

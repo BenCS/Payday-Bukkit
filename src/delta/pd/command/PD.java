@@ -1,9 +1,6 @@
 package delta.pd.command;
 
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.sql.SQLException;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import delta.pd.Lobby;
 import delta.pd.Main;
+import delta.pd.sql.SQL;
 import delta.pd.sql.stats.StatSearch;
 
 public class PD implements CommandExecutor {
@@ -78,6 +76,21 @@ public class PD implements CommandExecutor {
 					p.sendMessage(prefix + "Main Lobby set!");
 					
 					return true;
+					
+				}
+				
+				else if(args[0].equalsIgnoreCase("setserverdb")) {
+					
+			        try {
+						SQL.getStatement().execute("INSERT INTO serverinfo (servername, enabled, inlobby, ingame, startings) VALUES('" + Main.getInstance().getConfig().getString("Server-Name") + "', 0, 0, 0, 0);");
+					} catch (ClassNotFoundException | SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			        
+			        p.sendMessage(ChatColor.GREEN + Main.getInstance().getConfig().getString("Server-Name") + " db created!");
+			        
+			        return true;
 					
 				}
 				
