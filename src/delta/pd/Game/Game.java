@@ -1,5 +1,6 @@
 package delta.pd.Game;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import delta.pd.Lobby;
 import delta.pd.Main;
 import delta.pd.Util.FireworkEffectPlayer;
-import delta.pd.sql.stats.Mask;
+import delta.pd.sql.SQL;
 import delta.pd.sql.stats.StatSearch;
 
 public class Game {
@@ -33,7 +34,7 @@ public class Game {
         return instance;
     }
 
-	int cd = 61;
+	int cd = 31;
 	int countdown;
     
 	public List<String> inLobby = new ArrayList<String>();
@@ -164,19 +165,45 @@ public class Game {
     	
     }
     
+    public void endFail() {
+    	
+		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "You are all in custody! Missioned failed!");
+		
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+
+			@Override
+			public void run() {
+
+				for(Player p : Bukkit.getOnlinePlayers()) {
+					
+					p.kickPlayer(ChatColor.RED + "Mission Failed");
+					
+				}
+				
+				Bukkit.getServer().shutdown();
+				
+			}
+		}, 5 * 20);
+    	
+    }
+    
     public void endWin() {
     	
     	inLobby.clear();
     	spectators.clear();
     	
-    	for(Player p : Bukkit.getOnlinePlayers()) {
+    	reset();
+    	
+    	for(int x = 0; x < inGame.size(); x++) {
+    		
+    		Player p = Bukkit.getPlayer(inGame.get(x));
     		
     		Lobby.getInstance().teleportToWin(p);
     		
     	}
     	
     	Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
-
+    		
 			@Override
 			public void run() throws IllegalArgumentException {
 				
@@ -195,7 +222,7 @@ public class Game {
 				
 			}
     		
-    	}, 0, 40L);
+    	}, 0, 10);
     	
     	Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 
@@ -219,6 +246,8 @@ public class Game {
 	public void fillLobbyInv(Player p) throws ClassNotFoundException, SQLException {
 		
 		p.getInventory().clear();
+	
+		p.getInventory().setArmorContents(null);
 		
 		StatSearch.setBookStats(p, p.getName());
 		
@@ -243,11 +272,11 @@ public class Game {
 			
 			Player p = Bukkit.getPlayer(inLobby.get(x));
 			
+			Lobby.getInstance().teleportToGame(p);
+			
 			p.getInventory().clear();
 		
 			p.setGameMode(GameMode.SURVIVAL);
-			
-			inLobby.remove(p.getName());
 			
 			inGame.add(p.getName());
 			
@@ -257,18 +286,27 @@ public class Game {
 			p.getInventory().addItem(bow);
 			p.getInventory().addItem(new ItemStack(Material.ARROW, 1));
 			
-			Lobby.getInstance().teleportToGame(p);
+			   ResultSet rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username ='" + p.getName() + "';");
+
+			   String maskname = null;
+			   
+			   rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username LIKE '%" + p.getName() + "';");
+			     if (rs.next()) {
+			    	 maskname = rs.getString(1);
+			     }
+
+			   SQL.getConnection().close();
 			
 			ItemStack mask = new ItemStack(Material.SKULL_ITEM);
 			SkullMeta sm = (SkullMeta) mask.getItemMeta();
 			mask.setDurability((short) 3);
-			sm.setOwner(Mask.getMask(p));
+			sm.setOwner(maskname);
 			p.getInventory().setHelmet(mask);
 			
 		}
 		
-		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "Heist started on map " + ChatColor.YELLOW + Main.getInstance().getConfig().getString("Map-Name"));
-		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + Main.getInstance().getConfig().getString("Mission-Objective"));
+		broadcastGame(ChatColor.DARK_AQUA + "Heist started on map " + ChatColor.YELLOW + Main.getInstance().getConfig().getString("Map-Name"));
+		broadcastGame(ChatColor.DARK_AQUA + Main.getInstance().getConfig().getString("Mission-Objective"));
 		
 	}
 	
@@ -291,7 +329,7 @@ public class Game {
 					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
 				}
 				
-				if(cd < 11) {
+				if(cd < 11 && cd != 0) {
 					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
 				}
 				
@@ -306,11 +344,32 @@ public class Game {
 						e.printStackTrace();
 					}
 					
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+
+						@Override
+						public void run() {
+							for(int x = 0; x < inLobby.size(); x++) {
+								
+								Player p = Bukkit.getServer().getPlayer(inLobby.get(x));
+								
+								inLobby.remove(p.getName());
+								
+							}
+						}
+						
+					}, 20);
+					
 				}
 				
 			}
 			
 		}, 0, 20L);
+		
+	}
+	
+	public void reset() {
+		
+		Bukkit.getWorld("world").getEntities().clear();
 		
 	}
 	

@@ -50,9 +50,9 @@ public class LootDrop implements Listener {
 						
 						if(ln < lnm) {
 					
+							ln++;
+							
 							Game.getInstance().broadcastGame(ChatColor.DARK_AQUA + "Loot secured!");
-					
-							ln++;	
 						
 						}
 						

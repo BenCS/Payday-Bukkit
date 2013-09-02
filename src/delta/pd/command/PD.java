@@ -70,7 +70,7 @@ public class PD implements CommandExecutor {
 					
 					if(p.hasPermission("pd.admin")) {
 					
-						Lobby.getInstance().setLobby(p);
+						Lobby.getInstance().setWinSpawn(p);
 						p.sendMessage(prefix + "Win Lobby set!");
 					
 						return true;

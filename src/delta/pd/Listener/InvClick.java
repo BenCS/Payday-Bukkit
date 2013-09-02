@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 
 import delta.pd.Game.Game;
 
@@ -16,7 +17,11 @@ public class InvClick implements Listener {
 		
 		if(Game.getInstance().isPlayerInGame(p)) {
 			
-			e.setCancelled(true);
+			if(!e.getSlotType().equals(SlotType.CONTAINER)) {
+				
+				e.setCancelled(true);
+				
+			}
 			
 		}
 		

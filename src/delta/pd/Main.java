@@ -14,10 +14,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import delta.pd.Listener.BlockBreak;
+import delta.pd.Listener.BlockLoot;
 import delta.pd.Listener.BlockPlace;
 import delta.pd.Listener.InvClick;
 import delta.pd.Listener.ItemClick;
 import delta.pd.Listener.LootDrop;
+import delta.pd.Listener.PlayerDamager;
 import delta.pd.Listener.PlayerDeath;
 import delta.pd.Listener.PlayerJoin;
 import delta.pd.Listener.PlayerLeave;
@@ -95,6 +97,8 @@ public class Main extends JavaPlugin implements Listener {
 		pm.registerEvents(new PlayerMove(), this);
 		pm.registerEvents(new PlayerDeath(), this);
 		pm.registerEvents(new InvClick(), this);
+		pm.registerEvents(new BlockLoot(), this);
+		pm.registerEvents(new PlayerDamager(), this);
 		
 		getCommand("pd").setExecutor(new PD());
 		
@@ -108,13 +112,6 @@ public class Main extends JavaPlugin implements Listener {
         }
         
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule naturalRegeneration false");
-		
-	}
-	
-	@Override
-	public void onDisable() {
-
-		ConfigManager.getInstance().saveYamls();
 		
 	}
 	
