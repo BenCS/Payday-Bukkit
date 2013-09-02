@@ -6,7 +6,10 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,6 +18,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 
 import delta.pd.Lobby;
 import delta.pd.Main;
+import delta.pd.Util.FireworkEffectPlayer;
 import delta.pd.sql.stats.StatSearch;
 
 public class Game {
@@ -30,12 +34,18 @@ public class Game {
     
 	public List<String> inLobby = new ArrayList<String>();
 	public List<String> inGame = new ArrayList<String>();
+	public List<String> spectators = new ArrayList<String>();
 	
 	public int onlinePlayers = Bukkit.getOnlinePlayers().length;
 	public int maxPlayers = Bukkit.getMaxPlayers();
 	
 	public ScoreboardManager sm = Bukkit.getScoreboardManager();
 	public Scoreboard lobby = sm.getNewScoreboard();
+	
+	public boolean escape = false;
+	public boolean canLootBeSecured = true;
+	
+	FireworkEffectPlayer fplayer = new FireworkEffectPlayer();
 	
 	/*
 	 * 
@@ -90,8 +100,115 @@ public class Game {
 		inGame.add(p.getName());
 		
 	}
+
+	public boolean isPlayerSpectating(Player p) {
+		
+		if(spectators.contains(p.getName())) {
+			
+			return true;
+			
+		}
+		
+		return false;
+		
+	}
+	
+	public void addToSpectators(Player p) {
+		
+		spectators.add(p.getName());
+		
+	}
+	
+	public void removeFromSpectators(Player p) {
+		
+		spectators.remove(p.getName());
+		
+	}
+	
+    public void broadcastGame(String s) {
+
+        for (int x = 0; x < inGame.size(); x++) {
+
+            Player p = Bukkit.getServer().getPlayer(inGame.get(x));
+
+            p.sendMessage(s);
+
+        }
+    }
+    
+    public void broadcastLobby(String s) {
+    	
+    	for(int x = 0; x < inLobby.size(); x++) {
+    		
+    		Player p = Bukkit.getServer().getPlayer(inLobby.get(x));
+    		
+    		p.sendMessage(s);
+    		
+    	}
+    	
+    }
+    
+    public void broadcastSpectators(String s) {
+    	
+    	for(int x = 0; x < spectators.size(); x++) {
+    		
+    		Player p = Bukkit.getPlayer(spectators.get(x));
+    		
+    		p.sendMessage(s);
+    		
+    	}
+    	
+    }
+    
+    public void endWin() {
+    	
+    	inLobby.clear();
+    	spectators.clear();
+    	
+    	Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
+
+			@Override
+			public void run() throws IllegalArgumentException {
+				
+				for(int x = 0; x < inGame.size(); x++) {
+					
+					Player p = Bukkit.getServer().getPlayer(inGame.get(x));
+					
+					try {
+						fplayer.playFirework(p.getWorld(), p.getLocation().add(0,5,0), FireworkEffect.builder().with(Type.STAR).withColor(Color.ORANGE).build());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				
+			}
+    		
+    	}, 0, 40L);
+    	
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+
+			@Override
+			public void run() {
+
+				for(Player p : Bukkit.getOnlinePlayers()) {
+					
+					p.kickPlayer(ChatColor.GOLD + "Successful heist!");
+					
+				}
+				
+				Bukkit.getServer().shutdown();
+				
+			}
+    		
+    	}, 5 * 20);
+    	
+    }
 	
 	public void fillLobbyInv(Player p) throws ClassNotFoundException, SQLException {
+		
+		p.getInventory().clear();
 		
 		StatSearch.setBookStats(p, p.getName());
 		
@@ -102,6 +219,11 @@ public class Game {
 		
 		ItemStack shop = new ItemStack(Material.DIAMOND);
 		ItemMeta sm = shop.getItemMeta();
+		sm.setDisplayName(ChatColor.GREEN + "Shop");
+		shop.setItemMeta(sm);
+		
+		p.getInventory().addItem(leave);
+		p.getInventory().addItem(shop);
 		
 	}
 	
@@ -150,6 +272,16 @@ public class Game {
 					Bukkit.getScheduler().cancelTask(countdown);
 					
 					startGame();
+					
+					for(int x = 0; x < inLobby.size(); x++) {
+						
+						Player p = Bukkit.getPlayer(inLobby.get(x));
+						
+						inLobby.remove(p.getName());
+						
+						inGame.add(p.getName());
+						
+					}
 					
 				}
 				

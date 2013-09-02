@@ -15,8 +15,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import delta.pd.Listener.BlockBreak;
 import delta.pd.Listener.BlockPlace;
+import delta.pd.Listener.ItemClick;
+import delta.pd.Listener.LootDrop;
+import delta.pd.Listener.PlayerDeath;
 import delta.pd.Listener.PlayerJoin;
 import delta.pd.Listener.PlayerLeave;
+import delta.pd.Listener.PlayerMove;
 import delta.pd.Listener.RankChat;
 import delta.pd.command.PD;
 import delta.pd.sql.SQL;
@@ -85,6 +89,10 @@ public class Main extends JavaPlugin implements Listener {
 		pm.registerEvents(new PlayerLeave(), this);
 		pm.registerEvents(new BlockBreak(), this);
 		pm.registerEvents(new BlockPlace(), this);
+		pm.registerEvents(new ItemClick(), this);
+		pm.registerEvents(new LootDrop(), this);
+		pm.registerEvents(new PlayerMove(), this);
+		pm.registerEvents(new PlayerDeath(), this);
 		
 		getCommand("pd").setExecutor(new PD());
 		
@@ -108,10 +116,11 @@ public class Main extends JavaPlugin implements Listener {
         con = SQL.getConnection();
 
         //for server status, 0 = false 1 = true
-        
+
+        /*
         con.createStatement().execute("CREATE TABLE IF NOT EXISTS payday(username VARCHAR(255), kills INTEGER, deaths INTEGER, heists INTEGER, money INTEGER)");
-//        con.createStatement().execute("CREATE TABLE IF NOT EXISTS serverinfo(servername VARCHAR(255), enabled INTEGER, inlobby INTEGER, ingame INTEGER, startings INTEGER)");
-        
+        con.createStatement().execute("CREATE TABLE IF NOT EXISTS serverinfo(servername VARCHAR(255), enabled INTEGER, inlobby INTEGER, ingame INTEGER, startings INTEGER)");
+        */
     }
 
     public boolean doesPlayerExist(String target) throws SQLException, ClassNotFoundException {

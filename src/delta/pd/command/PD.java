@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 
 import delta.pd.Lobby;
 import delta.pd.Main;
+import delta.pd.Game.Game;
+import delta.pd.Util.WorldEditUtility;
 import delta.pd.sql.SQL;
 import delta.pd.sql.stats.StatSearch;
 
@@ -39,8 +41,8 @@ public class PD implements CommandExecutor {
 			if(args.length == 0) {
 				
 				p.sendMessage(g + "" + u + "--------------------" + ChatColor.GRAY + ChatColor.BOLD + "[ " + b + "PayDay" + g + ChatColor.BOLD + " ]" + u + "--------------------");
-				p.sendMessage(g + "Payday for MinecraftUniverse developed by " + r + "BenCS_ " + g + "and" );
-				p.sendMessage(r + "LegendSight. " + g + "**CURRENTLY IN ALPHA!!!!** Report bugs on forums!");
+				p.sendMessage(g + "Payday for MinecraftUniverse developed by " + b + "BenCS_ " + g + "and" );
+				p.sendMessage(b + "LegendSight. " + g + "**CURRENTLY IN ALPHA!!!!** Report bugs on forums!");
 				
 				return true;
 			
@@ -55,22 +57,7 @@ public class PD implements CommandExecutor {
 			
 			if(args.length == 1) {
 				
-				if(args[0].equalsIgnoreCase("lobby")) {
-					
-                    if (Lobby.getInstance().teleportToLobby(p)) {
-
-                        p.sendMessage(prefix + ChatColor.GRAY + "Teleporting to lobby!");
-
-                    } else if (!Lobby.getInstance().teleportToLobby(p)) {
-
-                        p.sendMessage(prefix + ChatColor.RED + "ERROR: Lobby not found! Please tell server staff!");
-                    }
-                    
-					return true;
-					
-				}
-				
-				else if(args[0].equalsIgnoreCase("setlobby")) {
+				if(args[0].equalsIgnoreCase("setlobby")) {
 					
 					if(p.hasPermission("pd.admin")) {
 					
@@ -94,26 +81,102 @@ public class PD implements CommandExecutor {
 					
 				}
 				
-				else if(args[0].equalsIgnoreCase("help")) {
+				else if(args[0].equalsIgnoreCase("reload")) {
 					
-					p.sendMessage(g + "" + u + "--------------------" + ChatColor.GRAY + ChatColor.BOLD + "[ " + b + "PayDay" + g + ChatColor.BOLD + " ]" + u + "--------------------");
-					p.sendMessage(b + "/pd -" + g + "Index Command");
-					p.sendMessage(b + "/pd help -" + g + "Shows this screen");
-					p.sendMessage(b + "/pd lobby - " + g + "Go to the lobby");
-					//This plugin is only for the game, lobby is a completely separate plugin.
-					
-				}
-				
-				else if(args[0].equalsIgnoreCase("stats")) {
-					
-					try {
-						StatSearch.getPlayerData(p, p.getName());
-					} catch (ClassNotFoundException | SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if(p.hasPermission("pd.admin")) {
+						
+						Main.getInstance().reloadConfig();
+						p.sendMessage(ChatColor.GREEN + "Reloaded config!");
+						
 					}
 					
 					return true;
+					
+				}
+				
+				else if(args[0].equalsIgnoreCase("help")) {
+					
+					p.sendMessage(g + "" + u + "--------------------" + ChatColor.GRAY + ChatColor.BOLD + "[ " + b + "PayDay" + g + ChatColor.BOLD + " ]" + u + "--------------------");
+					p.sendMessage(b + "/pd -" + g + " Index Command");
+					p.sendMessage(b + "/pd help -" + g + " Shows this screen");
+					p.sendMessage(b + "/pd lobby - " + g + " Go to the lobby");
+					//This plugin is only for the game, lobby is a completely separate plugin.
+					
+					return true;
+					
+				}
+				
+				else if(args[0].equalsIgnoreCase("createarena")) {
+				
+					if(p.hasPermission("pd.admin")) {
+					
+						if(WorldEditUtility.getInstance().doesSelectionExist(p)) {
+					
+							WorldEditUtility.getInstance().setArena(p);
+							p.sendMessage(ChatColor.DARK_AQUA + "Arena " + ChatColor.YELLOW + "successfully " + ChatColor.DARK_AQUA + "created!");
+						
+						} else {
+						
+							p.sendMessage(prefix + "No selection!");
+						
+						}
+					}
+						
+					return true;
+					
+				}
+				
+				else if(args[0].equalsIgnoreCase("createlootdrop")) {
+					
+					if(p.hasPermission("pd.admin")) {
+						
+						if(WorldEditUtility.getInstance().doesSelectionExist(p)) {
+							
+							WorldEditUtility.getInstance().setLootDropZone(p);
+							p.sendMessage(ChatColor.DARK_AQUA + "Lootcap " + ChatColor.YELLOW + "successfully " + ChatColor.DARK_AQUA + "created!");
+						
+						} else {
+						
+							p.sendMessage(prefix + "No selection!");
+						
+						}
+						
+					}
+					
+				}
+				
+				else if(args[0].equalsIgnoreCase("listtest")) {
+					
+					if(Game.getInstance().isPlayerInLobby(p)) {
+					
+						p.sendMessage("lobby");
+						
+					}
+					
+					if(Game.getInstance().isPlayerInGame(p)) {
+						
+						p.sendMessage("game");
+						
+					}
+					
+				}
+				
+				else if(args[0].equalsIgnoreCase("createescape")) {
+					
+					if(p.hasPermission("pd.admin")) {
+						
+						if(WorldEditUtility.getInstance().doesSelectionExist(p)) {
+							
+							WorldEditUtility.getInstance().setEscapeZone(p);
+							p.sendMessage(ChatColor.DARK_AQUA + "Escape " + ChatColor.YELLOW + "successfully " + ChatColor.DARK_AQUA + "created!");
+						
+						} else {
+						
+							p.sendMessage(prefix + "No selection!");
+						
+						}
+						
+					}
 					
 				}
 				
@@ -136,4 +199,6 @@ public class PD implements CommandExecutor {
 		return false;
 	}
 
+	
+	
 }

@@ -2,6 +2,7 @@ name: Payday
 main: delta.pd.Main
 version: 1.0
 authors: [BenCS_, Legend]
+depend: [WorldEdit]
 commands:
   pd:
     description: Index Command for Payday

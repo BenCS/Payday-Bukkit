@@ -3,6 +3,7 @@
 ###############################
 
 # Boring MySQL Shit
+
 MySQL:
   Enable: false
   Address: localhost
@@ -10,6 +11,10 @@ MySQL:
   Database: payday
   Username: root
   Password: pass
+  
 # Arena Settings
-Map-Name:
-Mission-Objective:
+
+Map-Name: Test
+Mission-Objective: Objective
+Payday-Lobby-Server: payday
+Loot-Needed: 4
