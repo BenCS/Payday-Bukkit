@@ -286,21 +286,22 @@ public class Game {
 			p.getInventory().addItem(bow);
 			p.getInventory().addItem(new ItemStack(Material.ARROW, 1));
 			
-			   ResultSet rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username ='" + p.getName() + "';");
+			   ResultSet rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username ='" + inLobby.get(x) + "';");
 
 			   String maskname = null;
 			   
-			   rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username LIKE '%" + p.getName() + "';");
+				ItemStack mask = new ItemStack(Material.SKULL_ITEM);
+				SkullMeta sm = (SkullMeta) mask.getItemMeta();
+				mask.setDurability((short) 3);
+			   
+			   rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username LIKE '%" + inLobby.get(x) + "';");
 			     if (rs.next()) {
 			    	 maskname = rs.getString(1);
+				sm.setOwner(maskname);
 			     }
 
 			   SQL.getConnection().close();
 			
-			ItemStack mask = new ItemStack(Material.SKULL_ITEM);
-			SkullMeta sm = (SkullMeta) mask.getItemMeta();
-			mask.setDurability((short) 3);
-			sm.setOwner(maskname);
 			p.getInventory().setHelmet(mask);
 			
 		}
