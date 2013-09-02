@@ -72,25 +72,25 @@ public class PD implements CommandExecutor {
 				
 				else if(args[0].equalsIgnoreCase("setlobby")) {
 					
-					Lobby.getInstance().setLobby(p);
-					p.sendMessage(prefix + "Main Lobby set!");
+					if(p.hasPermission("pd.admin")) {
 					
-					return true;
+						Lobby.getInstance().setLobby(p);
+						p.sendMessage(prefix + "Main Lobby set!");
+					
+						return true;
+					}
 					
 				}
 				
-				else if(args[0].equalsIgnoreCase("setserverdb")) {
+				else if(args[0].equalsIgnoreCase("setgamespawn")) {
 					
-			        try {
-						SQL.getStatement().execute("INSERT INTO serverinfo (servername, enabled, inlobby, ingame, startings) VALUES('" + Main.getInstance().getConfig().getString("Server-Name") + "', 0, 0, 0, 0);");
-					} catch (ClassNotFoundException | SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if(p.hasPermission("pd.admin")) {
+					
+						Lobby.getInstance().setGameSpawn(p);
+						p.sendMessage(prefix + "Game spawn set!");
+					
+						return true;
 					}
-			        
-			        p.sendMessage(ChatColor.GREEN + Main.getInstance().getConfig().getString("Server-Name") + " db created!");
-			        
-			        return true;
 					
 				}
 				

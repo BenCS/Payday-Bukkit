@@ -15,9 +15,6 @@ public class PlayerJoin implements Listener {
 
 	Game g = Game.getInstance();
 	
-	int cd = 61;
-	int countdown;
-	
 	@EventHandler
 	public void onPlayerJoinPD(PlayerJoinEvent e) {
 		
@@ -33,36 +30,7 @@ public class PlayerJoin implements Listener {
 		
 		if(g.inLobby.size() == 4) {
 			
-			countdown = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
-
-				@Override
-				public void run() {
-
-					if(cd != 0) {
-						cd--;
-					}
-					
-					if(cd == 60) {
-						Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left unil heist!");
-					}
-					
-					if(cd == 30) {
-						Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left unil heist!");
-					}
-					
-					if(cd < 11) {
-						Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left unil heist!");
-					}
-					
-					if(cd == 0) {
-						Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "Heist started on map " + ChatColor.YELLOW + Main.getInstance().getConfig().getString("Map-Name"));
-						cd = 60;
-						Bukkit.getScheduler().cancelTask(countdown);
-					}
-					
-				}
-				
-			}, 0, 20L);
+			g.countDown();
 			
 		}
 		

@@ -1,12 +1,21 @@
 package delta.pd.Game;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
+
+import delta.pd.Lobby;
+import delta.pd.Main;
+import delta.pd.sql.stats.StatSearch;
 
 public class Game {
 	
@@ -16,6 +25,9 @@ public class Game {
         return instance;
     }
 
+	int cd = 61;
+	int countdown;
+    
 	public List<String> inLobby = new ArrayList<String>();
 	public List<String> inGame = new ArrayList<String>();
 	
@@ -76,6 +88,74 @@ public class Game {
 	public void addToGame(Player p) {
 		
 		inGame.add(p.getName());
+		
+	}
+	
+	public void fillLobbyInv(Player p) throws ClassNotFoundException, SQLException {
+		
+		StatSearch.setBookStats(p, p.getName());
+		
+		ItemStack leave = new ItemStack(Material.COMPASS);
+		ItemMeta lm = leave.getItemMeta();
+		lm.setDisplayName(ChatColor.RED + "Leave Game");
+		leave.setItemMeta(lm);
+		
+		ItemStack shop = new ItemStack(Material.DIAMOND);
+		ItemMeta sm = shop.getItemMeta();
+		
+	}
+	
+	public void startGame() {
+		
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			
+			if(isPlayerInLobby(p)) {
+				
+				Lobby.getInstance().teleportToGame(p);
+				
+			}
+			
+		}
+		
+		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "Heist started on map " + ChatColor.YELLOW + Main.getInstance().getConfig().getString("Map-Name"));
+		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + Main.getInstance().getConfig().getString("Mission-Objective"));
+		
+	}
+	
+	public void countDown() {
+		
+		countdown = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
+
+			@Override
+			public void run() {
+
+				if(cd != 0) {
+					cd--;
+				}
+				
+				if(cd == 60) {
+					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
+				}
+				
+				if(cd == 30) {
+					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
+				}
+				
+				if(cd < 11) {
+					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
+				}
+				
+				if(cd == 0) {
+					cd = 61;
+					Bukkit.getScheduler().cancelTask(countdown);
+					
+					startGame();
+					
+				}
+				
+			}
+			
+		}, 0, 20L);
 		
 	}
 	

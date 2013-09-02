@@ -54,4 +54,37 @@ public class Lobby {
         
     }
     
+    public void setGameSpawn(Player p) {
+    	
+        Main.getInstance().Spawns.set("GameSpawn.X", p.getLocation().getBlockX());
+        Main.getInstance().Spawns.set("GameSpawn.Y", p.getLocation().getBlockY());
+        Main.getInstance().Spawns.set("GameSpawn.Z", p.getLocation().getBlockZ());
+        Main.getInstance().Spawns.set("GameSpawn.YAW", p.getLocation().getPitch());
+        Main.getInstance().Spawns.set("GameSpawn.PITCH", p.getLocation().getYaw());
+        Main.getInstance().Spawns.set("GameSpawn.WORLD", p.getLocation().getWorld().getName());
+        ConfigManager.getInstance().saveYamls();
+    	
+    }
+    
+    public boolean teleportToGame(Player p) {
+
+        if (!Main.getInstance().Spawns.contains("GameSpawn")) {
+            return false;
+        }
+
+        World world = Bukkit.getServer().getWorld(Main.getInstance().Spawns.getString("GameSpawn.WORLD"));
+        double x = Main.getInstance().Spawns.getDouble("GameSpawn.X");
+        double y = Main.getInstance().Spawns.getDouble("GameSpawn.Y");
+        double z = Main.getInstance().Spawns.getDouble("GameSpawn.Z");
+        long yaw = Main.getInstance().Spawns.getLong("GameSpawn.YAW");
+        long pitch = Main.getInstance().Spawns.getLong("GameSpawn.PITCH");
+        
+        Location location = new Location(world, x, y, z, yaw, pitch);
+
+        p.teleport(location);
+		
+        return true;
+        
+    }
+    
 }
