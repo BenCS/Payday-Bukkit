@@ -8,17 +8,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import delta.pd.Lobby;
 import delta.pd.Main;
 import delta.pd.Util.FireworkEffectPlayer;
+import delta.pd.sql.stats.Mask;
 import delta.pd.sql.stats.StatSearch;
 
 public class Game {
@@ -165,6 +169,12 @@ public class Game {
     	inLobby.clear();
     	spectators.clear();
     	
+    	for(Player p : Bukkit.getOnlinePlayers()) {
+    		
+    		Lobby.getInstance().teleportToWin(p);
+    		
+    	}
+    	
     	Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
 
 			@Override
@@ -227,15 +237,33 @@ public class Game {
 		
 	}
 	
-	public void startGame() {
+	public void startGame() throws ClassNotFoundException, SQLException {
 		
-		for(Player p : Bukkit.getOnlinePlayers()) {
+		for(int x = 0; x < inLobby.size(); x++) {
 			
-			if(isPlayerInLobby(p)) {
-				
-				Lobby.getInstance().teleportToGame(p);
-				
-			}
+			Player p = Bukkit.getPlayer(inLobby.get(x));
+			
+			p.getInventory().clear();
+		
+			p.setGameMode(GameMode.SURVIVAL);
+			
+			inLobby.remove(p.getName());
+			
+			inGame.add(p.getName());
+			
+			p.getInventory().addItem(new ItemStack(Material.STONE_SWORD));
+			ItemStack bow = new ItemStack(Material.BOW);
+			bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
+			p.getInventory().addItem(bow);
+			p.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+			
+			Lobby.getInstance().teleportToGame(p);
+			
+			ItemStack mask = new ItemStack(Material.SKULL_ITEM);
+			SkullMeta sm = (SkullMeta) mask.getItemMeta();
+			mask.setDurability((short) 3);
+			sm.setOwner(Mask.getMask(p));
+			p.getInventory().setHelmet(mask);
 			
 		}
 		
@@ -271,16 +299,11 @@ public class Game {
 					cd = 61;
 					Bukkit.getScheduler().cancelTask(countdown);
 					
-					startGame();
-					
-					for(int x = 0; x < inLobby.size(); x++) {
-						
-						Player p = Bukkit.getPlayer(inLobby.get(x));
-						
-						inLobby.remove(p.getName());
-						
-						inGame.add(p.getName());
-						
+					try {
+						startGame();
+					} catch (ClassNotFoundException | SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					
 				}

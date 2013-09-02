@@ -47,10 +47,14 @@ public class LootDrop implements Listener {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						
+						if(ln < lnm) {
 					
-						Game.getInstance().broadcastGame(ChatColor.DARK_AQUA + "Loot secured!");
+							Game.getInstance().broadcastGame(ChatColor.DARK_AQUA + "Loot secured!");
 					
-						ln++;
+							ln++;	
+						
+						}
 						
 						if(ln == lnm) {
 							

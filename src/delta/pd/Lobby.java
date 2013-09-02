@@ -86,5 +86,38 @@ public class Lobby {
         return true;
         
     }
+ 
+    public void setWinSpawn(Player p) {
+    	
+        Main.getInstance().Spawns.set("WinSpawn.X", p.getLocation().getBlockX());
+        Main.getInstance().Spawns.set("WinSpawn.Y", p.getLocation().getBlockY());
+        Main.getInstance().Spawns.set("WinSpawn.Z", p.getLocation().getBlockZ());
+        Main.getInstance().Spawns.set("WinSpawn.YAW", p.getLocation().getPitch());
+        Main.getInstance().Spawns.set("WinSpawn.PITCH", p.getLocation().getYaw());
+        Main.getInstance().Spawns.set("WinSpawn.WORLD", p.getLocation().getWorld().getName());
+        ConfigManager.getInstance().saveYamls();
+    	
+    }
+    
+    public boolean teleportToWin(Player p) {
+
+        if (!Main.getInstance().Spawns.contains("WinSpawn")) {
+            return false;
+        }
+
+        World world = Bukkit.getServer().getWorld(Main.getInstance().Spawns.getString("WinSpawn.WORLD"));
+        double x = Main.getInstance().Spawns.getDouble("WinSpawn.X");
+        double y = Main.getInstance().Spawns.getDouble("WinSpawn.Y");
+        double z = Main.getInstance().Spawns.getDouble("WinSpawn.Z");
+        long yaw = Main.getInstance().Spawns.getLong("WinSpawn.YAW");
+        long pitch = Main.getInstance().Spawns.getLong("WinSpawn.PITCH");
+        
+        Location location = new Location(world, x, y, z, yaw, pitch);
+
+        p.teleport(location);
+		
+        return true;
+        
+    }
     
 }

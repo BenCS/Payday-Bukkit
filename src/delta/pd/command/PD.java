@@ -1,6 +1,5 @@
 package delta.pd.command;
 
-import java.sql.SQLException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,8 +10,6 @@ import delta.pd.Lobby;
 import delta.pd.Main;
 import delta.pd.Game.Game;
 import delta.pd.Util.WorldEditUtility;
-import delta.pd.sql.SQL;
-import delta.pd.sql.stats.StatSearch;
 
 public class PD implements CommandExecutor {
 
@@ -63,6 +60,18 @@ public class PD implements CommandExecutor {
 					
 						Lobby.getInstance().setLobby(p);
 						p.sendMessage(prefix + "Main Lobby set!");
+					
+						return true;
+					}
+					
+				}
+				
+				else if(args[0].equalsIgnoreCase("setwin")) {
+					
+					if(p.hasPermission("pd.admin")) {
+					
+						Lobby.getInstance().setLobby(p);
+						p.sendMessage(prefix + "Win Lobby set!");
 					
 						return true;
 					}
@@ -142,6 +151,8 @@ public class PD implements CommandExecutor {
 						}
 						
 					}
+					
+					return true;
 					
 				}
 				

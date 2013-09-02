@@ -37,7 +37,7 @@ public class PlayerJoin implements Listener {
 			e1.printStackTrace();
 		}
 		
-		if(g.inLobby.size() == 4) {
+		if(g.inLobby.size() == Main.getInstance().getConfig().getInt("Players-Needed")) {
 			
 			g.countDown();
 			

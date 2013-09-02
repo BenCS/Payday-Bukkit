@@ -27,7 +27,7 @@ public class PlayerMoney {
     
 	public static int money = 0;
 	
-    public static int getPlayerKills(Player player) throws SQLException, ClassNotFoundException {
+    public static int getPlayerMoney(Player player) throws SQLException, ClassNotFoundException {
 
         ResultSet rs = SQL.getStatement().executeQuery("SELECT money FROM payday WHERE username ='" + player.getName() + "';");
 

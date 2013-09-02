@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import delta.pd.Main;
 import delta.pd.Game.Game;
 import delta.pd.Util.WorldEditUtility;
 
@@ -32,7 +33,7 @@ public class PlayerMove implements Listener {
 						
 					}
 					
-					else if(inEscape.size() == 4) {
+					else if(inEscape.size() == Game.getInstance().inGame.size()) {
 						
 						Game.getInstance().endWin();
 						
