@@ -35,7 +35,7 @@ public class ItemClick implements Listener {
 		}
 	}
 	
-	@EventHandler
+/*	@EventHandler
 	public void onPlayerInteractShopPD(PlayerInteractEvent e) {
 		
 		Player p = e.getPlayer();
@@ -57,6 +57,6 @@ public class ItemClick implements Listener {
 			}
 		}
 		
-	}
+	} */
 	
 }

@@ -41,6 +41,14 @@ public class PlayerMove implements Listener {
 						
 					}
 					
+				} else {
+					
+					if(inEscape.contains(p.getName())) {
+						
+						inEscape.remove(p.getName());
+						
+					}
+					
 				}
 				
 			}

@@ -18,7 +18,7 @@ public class PlayerJoin implements Listener {
 	Game g = Game.getInstance();
 	
 	@EventHandler
-	public void onPlayerJoinPD(PlayerJoinEvent e) {
+	public void onPlayerJoinPD(PlayerJoinEvent e) throws IllegalStateException, ClassNotFoundException, SQLException {
 		
 		Player p = e.getPlayer();
 		
@@ -35,6 +35,12 @@ public class PlayerJoin implements Listener {
 		} catch (ClassNotFoundException | SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		}
+		
+		for(int x = 0; x < g.inLobby.size(); x++) {
+		
+			g.setLobbyScoreboard(p);
+		
 		}
 		
 		if(g.inLobby.size() == Main.getInstance().getConfig().getInt("Players-Needed")) {

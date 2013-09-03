@@ -9,14 +9,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
@@ -24,6 +27,10 @@ import delta.pd.Lobby;
 import delta.pd.Main;
 import delta.pd.Util.FireworkEffectPlayer;
 import delta.pd.sql.SQL;
+import delta.pd.sql.stats.PlayerDeaths;
+import delta.pd.sql.stats.PlayerHeists;
+import delta.pd.sql.stats.PlayerKills;
+import delta.pd.sql.stats.PlayerMoney;
 import delta.pd.sql.stats.StatSearch;
 
 public class Game {
@@ -45,7 +52,9 @@ public class Game {
 	public int maxPlayers = Bukkit.getMaxPlayers();
 	
 	public ScoreboardManager sm = Bukkit.getScoreboardManager();
-	public Scoreboard lobby = sm.getNewScoreboard();
+	
+	public Scoreboard lobbysb = sm.getNewScoreboard();
+	public Objective lobbyobj = lobbysb.registerNewObjective("Title", "dummy");
 	
 	public boolean escape = false;
 	public boolean canLootBeSecured = true;
@@ -164,7 +173,161 @@ public class Game {
     	}
     	
     }
-    
+	
+	public void fillLobbyInv(Player p) throws ClassNotFoundException, SQLException {
+		
+		p.getInventory().clear();
+	
+		p.getInventory().setArmorContents(null);
+		
+		StatSearch.setBookStats(p, p.getName());
+		
+		ItemStack leave = new ItemStack(Material.COMPASS);
+		ItemMeta lm = leave.getItemMeta();
+		lm.setDisplayName(ChatColor.RED + "Leave Game");
+		leave.setItemMeta(lm);
+		
+	/*	ItemStack shop = new ItemStack(Material.DIAMOND);
+		ItemMeta sm = shop.getItemMeta();
+		sm.setDisplayName(ChatColor.GREEN + "Shop");
+		shop.setItemMeta(sm); */
+		
+		p.getInventory().addItem(leave);
+		
+	}
+	
+	public void startGame() throws ClassNotFoundException, SQLException {
+		
+		for(int x = 0; x < inLobby.size(); x++) {
+			
+			Player p = Bukkit.getPlayer(inLobby.get(x));
+			
+			Lobby.getInstance().teleportToGame(p);
+			
+			p.getInventory().clear();
+		
+			p.setGameMode(GameMode.SURVIVAL);
+			
+			inGame.add(p.getName());
+			
+			p.getInventory().addItem(new ItemStack(Material.STONE_SWORD));
+			ItemStack bow = new ItemStack(Material.BOW);
+			bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
+			p.getInventory().addItem(bow);
+			p.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+			
+			   ResultSet rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username ='" + inLobby.get(x) + "';");
+
+			   String maskname = null;
+			   
+				ItemStack mask = new ItemStack(Material.SKULL_ITEM);
+				SkullMeta sm = (SkullMeta) mask.getItemMeta();
+				mask.setDurability((short) 3);
+			   
+			   rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username LIKE '%" + inLobby.get(x) + "';");
+			     if (rs.next()) {
+			    	 maskname = rs.getString(1);
+				sm.setOwner(maskname);
+			     }
+
+			   SQL.getConnection().close();
+			
+			p.getInventory().setHelmet(mask);
+			
+		}
+		
+		broadcastGame(ChatColor.DARK_AQUA + "Heist started on map " + ChatColor.YELLOW + Main.getInstance().getConfig().getString("Map-Name"));
+		broadcastGame(ChatColor.DARK_AQUA + Main.getInstance().getConfig().getString("Mission-Objective"));
+		
+	}
+	
+	public void setLobbyScoreboard(Player p) throws IllegalStateException, ClassNotFoundException, SQLException {
+		
+		lobbyobj.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "PD - Lobby");
+		lobbyobj.setDisplaySlot(DisplaySlot.SIDEBAR);
+		Score kills = lobbyobj.getScore(Bukkit.getOfflinePlayer(ChatColor.GRAY + "Kills:"));
+		kills.setScore(PlayerKills.getPlayerKills(p));
+		
+		Score deaths = lobbyobj.getScore(Bukkit.getOfflinePlayer(ChatColor.GRAY + "Deaths:"));
+		deaths.setScore(PlayerDeaths.getPlayerDeaths(p));
+		
+		Score heists = lobbyobj.getScore(Bukkit.getOfflinePlayer(ChatColor.GRAY + "Heists:"));
+		heists.setScore(PlayerHeists.getPlayerHeists(p));
+		
+		Score money = lobbyobj.getScore(Bukkit.getOfflinePlayer(ChatColor.GRAY + "Money:"));
+		money.setScore(PlayerMoney.getPlayerMoney(p));
+
+		Score playersneeded = lobbyobj.getScore(Bukkit.getOfflinePlayer(ChatColor.GRAY + "NeededPlayers:"));
+		int pn = Main.getInstance().getConfig().getInt("Players-Needed");
+		playersneeded.setScore(pn - inLobby.size());
+		
+		p.setScoreboard(lobbysb);
+		
+	}
+	
+	public void updateScoreboard(Player p) {
+		
+		
+		
+	}
+	
+	public void countDown() {
+		
+		countdown = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
+
+			@Override
+			public void run() {
+
+				if(cd != 0) {
+					cd--;
+				}
+				
+				if(cd == 60) {
+					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
+				}
+				
+				if(cd == 30) {
+					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
+				}
+				
+				if(cd < 11 && cd != 0) {
+					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
+				}
+				
+				if(cd == 0) {
+					cd = 61;
+					Bukkit.getScheduler().cancelTask(countdown);
+					
+					try {
+						startGame();
+					} catch (ClassNotFoundException | SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+
+						@Override
+						public void run() {
+							for(int x = 0; x < inLobby.size(); x++) {
+								
+								Player p = Bukkit.getServer().getPlayer(inLobby.get(x));
+								
+								inLobby.remove(p.getName());
+								
+							}
+						}
+						
+					}, 20);
+					
+				}
+				
+			}
+			
+		}, 0, 20L);
+		
+	}
+	
     public void endFail() {
     	
 		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "You are all in custody! Missioned failed!");
@@ -243,133 +406,8 @@ public class Game {
     	
     }
 	
-	public void fillLobbyInv(Player p) throws ClassNotFoundException, SQLException {
-		
-		p.getInventory().clear();
-	
-		p.getInventory().setArmorContents(null);
-		
-		StatSearch.setBookStats(p, p.getName());
-		
-		ItemStack leave = new ItemStack(Material.COMPASS);
-		ItemMeta lm = leave.getItemMeta();
-		lm.setDisplayName(ChatColor.RED + "Leave Game");
-		leave.setItemMeta(lm);
-		
-		ItemStack shop = new ItemStack(Material.DIAMOND);
-		ItemMeta sm = shop.getItemMeta();
-		sm.setDisplayName(ChatColor.GREEN + "Shop");
-		shop.setItemMeta(sm);
-		
-		p.getInventory().addItem(leave);
-		p.getInventory().addItem(shop);
-		
-	}
-	
-	public void startGame() throws ClassNotFoundException, SQLException {
-		
-		for(int x = 0; x < inLobby.size(); x++) {
-			
-			Player p = Bukkit.getPlayer(inLobby.get(x));
-			
-			Lobby.getInstance().teleportToGame(p);
-			
-			p.getInventory().clear();
-		
-			p.setGameMode(GameMode.SURVIVAL);
-			
-			inGame.add(p.getName());
-			
-			p.getInventory().addItem(new ItemStack(Material.STONE_SWORD));
-			ItemStack bow = new ItemStack(Material.BOW);
-			bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
-			p.getInventory().addItem(bow);
-			p.getInventory().addItem(new ItemStack(Material.ARROW, 1));
-			
-			   ResultSet rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username ='" + inLobby.get(x) + "';");
-
-			   String maskname = null;
-			   
-				ItemStack mask = new ItemStack(Material.SKULL_ITEM);
-				SkullMeta sm = (SkullMeta) mask.getItemMeta();
-				mask.setDurability((short) 3);
-			   
-			   rs = SQL.getStatement().executeQuery("SELECT mask FROM payday WHERE username LIKE '%" + inLobby.get(x) + "';");
-			     if (rs.next()) {
-			    	 maskname = rs.getString(1);
-				sm.setOwner(maskname);
-			     }
-
-			   SQL.getConnection().close();
-			
-			p.getInventory().setHelmet(mask);
-			
-		}
-		
-		broadcastGame(ChatColor.DARK_AQUA + "Heist started on map " + ChatColor.YELLOW + Main.getInstance().getConfig().getString("Map-Name"));
-		broadcastGame(ChatColor.DARK_AQUA + Main.getInstance().getConfig().getString("Mission-Objective"));
-		
-	}
-	
-	public void countDown() {
-		
-		countdown = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
-
-			@Override
-			public void run() {
-
-				if(cd != 0) {
-					cd--;
-				}
-				
-				if(cd == 60) {
-					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
-				}
-				
-				if(cd == 30) {
-					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
-				}
-				
-				if(cd < 11 && cd != 0) {
-					Bukkit.broadcastMessage(ChatColor.YELLOW + "" + cd + ChatColor.DARK_AQUA + " seconds left until heist!");
-				}
-				
-				if(cd == 0) {
-					cd = 61;
-					Bukkit.getScheduler().cancelTask(countdown);
-					
-					try {
-						startGame();
-					} catch (ClassNotFoundException | SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-
-						@Override
-						public void run() {
-							for(int x = 0; x < inLobby.size(); x++) {
-								
-								Player p = Bukkit.getServer().getPlayer(inLobby.get(x));
-								
-								inLobby.remove(p.getName());
-								
-							}
-						}
-						
-					}, 20);
-					
-				}
-				
-			}
-			
-		}, 0, 20L);
-		
-	}
-	
 	public void reset() {
-		
+		 
 		Bukkit.getWorld("world").getEntities().clear();
 		
 	}

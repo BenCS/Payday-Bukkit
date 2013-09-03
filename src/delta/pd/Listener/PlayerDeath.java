@@ -1,13 +1,11 @@
 package delta.pd.Listener;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import delta.pd.Main;
 import delta.pd.Game.Game;
 
 public class PlayerDeath implements Listener {
@@ -22,6 +20,8 @@ public class PlayerDeath implements Listener {
 			Game.getInstance().broadcastGame(ChatColor.YELLOW + p.getName() + ChatColor.DARK_AQUA + " Is in custody!");
 			
 			Game.getInstance().removeFromGame(p);
+			
+			e.getDrops().clear();
 			
 			if(Game.getInstance().inGame.size() == 0) {
 				
