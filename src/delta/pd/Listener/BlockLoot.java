@@ -29,6 +29,8 @@ public class BlockLoot implements Listener {
 		if(!p.getInventory().contains(loot)) {
 			
 			p.getInventory().addItem(loot);
+			
+			p.setWalkSpeed(.04F);
 		
 		} else {
 			

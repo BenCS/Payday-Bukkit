@@ -18,8 +18,8 @@ import delta.pd.Util.WorldEditUtility;
 
 public class LootDrop implements Listener {
 	
-	int lnm = Main.getInstance().getConfig().getInt("Loot-Needed");
-	int ln = 0;
+	public int lnm = Main.getInstance().getConfig().getInt("Loot-Needed");
+	public static int ln = 0;
 	
 	FireworkEffectPlayer fplayer = new FireworkEffectPlayer();
 	
@@ -52,7 +52,7 @@ public class LootDrop implements Listener {
 					
 							ln++;
 							
-							Game.getInstance().broadcastGame(ChatColor.DARK_AQUA + "Loot secured!");
+							Game.getInstance().broadcastGame(ChatColor.DARK_AQUA + "Loot secured! (" + ChatColor.YELLOW + ln + ChatColor.DARK_AQUA + "/" + ChatColor.YELLOW + lnm + ChatColor.DARK_AQUA + ")");
 						
 						}
 						

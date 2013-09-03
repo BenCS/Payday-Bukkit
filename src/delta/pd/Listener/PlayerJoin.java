@@ -14,9 +14,7 @@ import delta.pd.Main;
 import delta.pd.Game.Game;
 
 public class PlayerJoin implements Listener {
-
-	Game g = Game.getInstance();
-	
+		
 	@EventHandler
 	public void onPlayerJoinPD(PlayerJoinEvent e) throws IllegalStateException, ClassNotFoundException, SQLException {
 		
@@ -24,28 +22,26 @@ public class PlayerJoin implements Listener {
 		
 		Lobby.getInstance().teleportToLobby(p);
 		
-		g.addToLobby(p);
+		Game.getInstance().addToLobby(p);
 		
-		Bukkit.getServer().broadcastMessage(ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + " Joined the heist! (" + ChatColor.DARK_AQUA + (g.inLobby.size()) + ChatColor.YELLOW + "/" + ChatColor.DARK_AQUA + g.maxPlayers + ChatColor.YELLOW + ")");
+		Bukkit.getServer().broadcastMessage(ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + " Joined the heist! (" + ChatColor.DARK_AQUA + (Game.getInstance().inLobby.size()) + ChatColor.YELLOW + "/" + ChatColor.DARK_AQUA + Game.getInstance().maxPlayers + ChatColor.YELLOW + ")");
 		
 		e.setJoinMessage(null);
 		
 		try {
-			g.fillLobbyInv(p);
+			Game.getInstance().fillLobbyInv(p);
 		} catch (ClassNotFoundException | SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
-		for(int x = 0; x < g.inLobby.size(); x++) {
+		Game.getInstance().setLobbyScoreboard(p);
 		
-			g.setLobbyScoreboard(p);
+		p.setScoreboard(Game.getInstance().lobbysb);
 		
-		}
-		
-		if(g.inLobby.size() == Main.getInstance().getConfig().getInt("Players-Needed")) {
+		if(Game.getInstance().inLobby.size() == Main.getInstance().getConfig().getInt("Players-Needed")) {
 			
-			g.countDown();
+			Game.getInstance().countDown();
 			
 		}
 		

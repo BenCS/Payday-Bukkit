@@ -31,60 +31,60 @@ import delta.pd.sql.SQL;
 public class Main extends JavaPlugin implements Listener {
 
 	static Main instance;
-	
+
 	public static Main getInstance() {
-		
+
 		return instance;
-		
+
 	}
-	
-    public File configFile;
-    public FileConfiguration Config;
 
-    public File arenaFile;
-    public FileConfiguration Arena;
+	public File configFile;
+	public FileConfiguration Config;
 
-    public File invFile;
-    public FileConfiguration Inv;
+	public File arenaFile;
+	public FileConfiguration Arena;
 
-    public File chestFile;
-    public FileConfiguration Chest;
+	public File invFile;
+	public FileConfiguration Inv;
 
-    public File spawnFile;
-    public FileConfiguration Spawns;
-	
-    Logger log = Bukkit.getLogger();
-    
+	public File chestFile;
+	public FileConfiguration Chest;
+
+	public File spawnFile;
+	public FileConfiguration Spawns;
+
+	Logger log = Bukkit.getLogger();
+
 	@Override
 	public void onEnable() {
-		
+
 		instance = this;
-		
+
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-		
-        configFile = new File(getDataFolder(), "config.yml");
-        arenaFile = new File(getDataFolder(), "arena.yml");
-        invFile = new File(getDataFolder(), "inventorys.yml");
-        chestFile = new File(getDataFolder(), "chests.yml");
-        spawnFile = new File(getDataFolder(), "spawns.yml");
 
-        try {
+		configFile = new File(getDataFolder(), "config.yml");
+		arenaFile = new File(getDataFolder(), "arena.yml");
+		invFile = new File(getDataFolder(), "inventorys.yml");
+		chestFile = new File(getDataFolder(), "chests.yml");
+		spawnFile = new File(getDataFolder(), "spawns.yml");
 
-            ConfigManager.getInstance().firstRun();
+		try {
 
-        } catch (Exception e) {
+			ConfigManager.getInstance().firstRun();
 
-            e.printStackTrace();
-        }
+		} catch (Exception e) {
 
-        this.Config = new YamlConfiguration();
-        this.Arena = new YamlConfiguration();
-        this.Inv = new YamlConfiguration();
-        this.Chest = new YamlConfiguration();
-        this.Spawns = new YamlConfiguration();
-        ConfigManager.getInstance().loadYamls();
-        ConfigManager.getInstance().saveYamls();
-		
+			e.printStackTrace();
+		}
+
+		this.Config = new YamlConfiguration();
+		this.Arena = new YamlConfiguration();
+		this.Inv = new YamlConfiguration();
+		this.Chest = new YamlConfiguration();
+		this.Spawns = new YamlConfiguration();
+		ConfigManager.getInstance().loadYamls();
+		ConfigManager.getInstance().saveYamls();
+
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(new RankChat(), this);
@@ -99,43 +99,50 @@ public class Main extends JavaPlugin implements Listener {
 		pm.registerEvents(new InvClick(), this);
 		pm.registerEvents(new BlockLoot(), this);
 		pm.registerEvents(new PlayerDamager(), this);
-		
+
 		getCommand("pd").setExecutor(new PD());
-		
-        try {
-            this.checkDatabase();
 
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-            log.severe("Connection failed. Defaulting to SQLite.");
-            this.Config.set("MySQL.Enable", false);
-        }
-        
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule naturalRegeneration false");
-		
+		try {
+			this.checkDatabase();
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			log.severe("Connection failed. Defaulting to SQLite.");
+			this.Config.set("MySQL.Enable", false);
+		}
+
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+				"gamerule naturalRegeneration false");
+
 	}
-	
-    public void checkDatabase() throws SQLException, ClassNotFoundException {
 
-        Connection con = null;
+	public void checkDatabase() throws SQLException, ClassNotFoundException {
 
-        con = SQL.getConnection();
+		Connection con = null;
 
-        //for server status, 0 = false 1 = true
+		con = SQL.getConnection();
 
-        /*
-        con.createStatement().execute("CREATE TABLE IF NOT EXISTS payday(username VARCHAR(255), kills INTEGER, deaths INTEGER, heists INTEGER, money INTEGER)");
-        con.createStatement().execute("CREATE TABLE IF NOT EXISTS serverinfo(servername VARCHAR(255), enabled INTEGER, inlobby INTEGER, ingame INTEGER, startings INTEGER)");
-        */
-    }
+		// for server status, 0 = false 1 = true
 
-    public boolean doesPlayerExist(String target) throws SQLException, ClassNotFoundException {
-        ResultSet rs = SQL.getStatement().executeQuery("SELECT COUNT(*) FROM payday WHERE username LIKE '%" + target + "';");
-        rs.next();
-        if (rs.getInt(1) != 0) {
-        	return true;
-        }
+		/*
+		 * con.createStatement().execute(
+		 * "CREATE TABLE IF NOT EXISTS payday(username VARCHAR(255), kills INTEGER, deaths INTEGER, heists INTEGER, money INTEGER)"
+		 * ); con.createStatement().execute(
+		 * "CREATE TABLE IF NOT EXISTS serverinfo(servername VARCHAR(255), enabled INTEGER, inlobby INTEGER, ingame INTEGER, startings INTEGER)"
+		 * );
+		 */
+	}
+
+	public boolean doesPlayerExist(String target) throws SQLException,
+			ClassNotFoundException {
+		ResultSet rs = SQL.getStatement().executeQuery(
+				"SELECT COUNT(*) FROM payday WHERE username LIKE '%" + target
+						+ "';");
+		rs.next();
+		if (rs.getInt(1) != 0) {
+			return true;
+		}
 		return false;
-    } 
-    
+	}
+
 }
