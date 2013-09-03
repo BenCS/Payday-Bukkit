@@ -454,6 +454,8 @@ public class Game {
 
 			Lobby.getInstance().teleportToWin(p);
 
+			p.setWalkSpeed(1F);
+			
 		}
 
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(),

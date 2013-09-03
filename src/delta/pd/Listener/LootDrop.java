@@ -7,6 +7,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -25,6 +26,8 @@ public class LootDrop implements Listener {
 	
 	@EventHandler
 	public void lootDrop(PlayerDropItemEvent e) {
+		
+		Player p = e.getPlayer();
 	
 	if(Game.getInstance().canLootBeSecured) {	
 		
@@ -32,6 +35,8 @@ public class LootDrop implements Listener {
 		
 			final Entity en = e.getItemDrop();
 		
+			p.setWalkSpeed(0.2F);
+			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 
 				@Override
@@ -40,7 +45,7 @@ public class LootDrop implements Listener {
 					if(WorldEditUtility.getInstance().isBlockInLootPlace(en.getLocation())) {
 					
 						en.remove();
-					
+						
 						try {
 							fplayer.playFirework(en.getWorld(), en.getLocation(), FireworkEffect.builder().with(Type.BALL).withColor(Color.RED).withFlicker().build());
 						} catch (Exception e) {
@@ -71,6 +76,10 @@ public class LootDrop implements Listener {
 				}
 				
 			}, 20);
+		} else {
+			
+			e.setCancelled(true);
+			
 		}
 	}
 
