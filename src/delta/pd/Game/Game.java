@@ -247,6 +247,8 @@ public class Game {
 
 			SQL.getConnection().close();
 
+			mask.setItemMeta(sm);
+			
 			p.getInventory().setHelmet(mask);
 
 			setGameScoreboard(p);

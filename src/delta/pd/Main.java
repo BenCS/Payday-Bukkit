@@ -37,6 +37,14 @@ public class Main extends JavaPlugin implements Listener {
 		return instance;
 
 	}
+	
+	/**
+	 * 
+	 * Payday plugin for MinecraftUniverse.
+	 * 
+	 * @author BenCS_
+	 * 
+	 */
 
 	public File configFile;
 	public FileConfiguration Config;
